@@ -12,6 +12,10 @@ find_package(OpenSSL REQUIRED)
 
 set(LIBRARY_NAME solana_rpc)
 
+if (UNIX)
+    add_compile_options("-fexceptions")
+endif(UNIX)
+
 add_subdirectory(Rpc)
 add_subdirectory(Core)
 

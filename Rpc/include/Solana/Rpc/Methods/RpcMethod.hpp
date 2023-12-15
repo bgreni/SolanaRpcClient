@@ -24,7 +24,7 @@ namespace Solana {
             return RpcReply {
                 .jsonrpc = j["jsonrpc"],
                 .id = j["id"].get<std::string>(),
-                .result = T::Reply::parse(j)
+                .result = T::parseReply(j)
             };
         }
     };

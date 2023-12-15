@@ -10,20 +10,19 @@ namespace Solana {
     struct GetBalance : RpcMethod {
 
         struct Reply {
-            static Reply parse(const json & data) {
-                return Reply {.value = data["result"]["value"].get<int64_t>()};
-            }
-
             int64_t value;
         };
 
         struct Config {
-            Config() = default;
-            std::optional<std::string> commitment = {};
-            std::optional<int64_t> minContextSlot = {};
+            std::optional<std::string> commitment;
+            std::optional<int64_t> minContextSlot;
         };
 
-        GetBalance(const std::string & address, const Config & config = Config()) : address(address), config(config) {}
+        explicit GetBalance(const std::string & address, const Config & config = {}) : address(address), config(config) {}
+
+        static Reply parseReply(const json & data) {
+            return Reply {.value = data["result"]["value"].get<int64_t>()};
+        }
 
         json toJson() const override {
             json c = {};

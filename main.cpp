@@ -6,16 +6,13 @@
 using namespace Solana;
 
 int main() {
-
-
     auto rpc = Rpc(std::getenv("ENDPOINT"));
-    auto res = rpc.send(
-        GetBalance("FpscJFipKBoAFXjhXfrruWyhsoNFisu8H8kLDdw1k8yH",
-        GetBalance::Config{.commitment = "confirmed"}))
-        .get().result.value;
 
-//    auto res = rpc.send(GetBlockHeight());
-//    std::cout << res.get().result.height;
-    std::cout << res;
+    auto res = rpc.send(GetBlockHeight());
+    std::cout << res.get().result.height << "\n";
+
+    auto jsonRes = rpc.send(WithJsonReply<GetBlockHeight>());
+    std::cout << jsonRes.get().result << "\n";
+
     return 0;
 }
