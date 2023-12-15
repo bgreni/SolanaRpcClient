@@ -5,6 +5,7 @@
 #include <string_view>
 #include <iostream>
 #include <optional>
+#include "Common.hpp"
 
 namespace Solana {
     struct GetBalance : RpcMethod {
@@ -14,8 +15,8 @@ namespace Solana {
         };
 
         struct Config {
-            std::optional<std::string> commitment;
-            std::optional<int64_t> minContextSlot;
+            Commitment commitment;
+            MinContextSlot minContextSlot;
         };
 
         explicit GetBalance(const std::string & address, const Config & config = {}) : address(address), config(config) {}
@@ -26,13 +27,9 @@ namespace Solana {
 
         json toJson() const override {
             json c = {};
-            if (config.commitment.has_value()) {
-                c["commitment"] = *config.commitment;
-            }
 
-            if (config.minContextSlot.has_value()) {
-                c["minContextSlot"] = *config.minContextSlot;
-            }
+            config.commitment.addToJson(c);
+            config.minContextSlot.addToJson(c);
             return json::array({
                 json(address),
                 c

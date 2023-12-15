@@ -3,6 +3,7 @@
 #include <optional>
 #include <string>
 #include <array>
+#include "Common.hpp"
 
 namespace Solana {
     struct GetAccountInfo : RpcMethod {
@@ -22,7 +23,6 @@ namespace Solana {
         };
 
         static Reply parseReply(const json & data) {
-            std::cout << "FUCK: " << data.dump() << "\n";
             const auto d = data["result"]["value"];
             return Reply {
                     .accountData = d
@@ -38,12 +38,14 @@ namespace Solana {
             };
         }
 
-        GetAccountInfo(std::string address) : key(address) {}
-
         struct Config {
-            std::optional<std::string> commitment;
+            Commitment commitment;
             std::optional<std::string> encoding;
         };
+
+        GetAccountInfo(std::string address) : key(address) {}
+
+
 
         std::string methodName() const override { return "getAccountInfo"; }
 

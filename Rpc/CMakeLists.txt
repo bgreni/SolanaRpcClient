@@ -9,8 +9,7 @@ file(
 file(GLOB SOURCES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 
 
-add_library(${PROJECT_NAME} STATIC ${SOURCES} ${HEADER_LIST}
-        include/Solana/Rpc/Methods/WithJsonReply.hpp)
+add_library(${PROJECT_NAME} STATIC ${SOURCES} ${HEADER_LIST})
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
         Solana.Core.Network

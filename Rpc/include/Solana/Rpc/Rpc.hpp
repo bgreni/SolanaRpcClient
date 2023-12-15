@@ -3,6 +3,7 @@
 #include "Solana/Core/Network/HttpClient.hpp"
 #include "Solana/Rpc/Methods/GetBalance.hpp"
 #include "Solana/Rpc/Methods/GetBlockHeight.hpp"
+#include "Solana/Rpc/Methods/GetBlock.hpp"
 #include "Solana/Rpc/Methods/GetAccountInfo.hpp"
 #include "Solana/Rpc/Methods/WithJsonReply.hpp"
 
@@ -23,10 +24,10 @@ namespace Solana {
             if (req.hasParams())
                 j["params"] = req.toJson();
 
-//#if !NDEBUG
-//            #include <iostream>
-//            std::cout << "SENDING: " << j.dump() << "\n";
-//#endif
+#if !NDEBUG
+            #include <iostream>
+            std::cout << "SENDING: " << j.dump() << "\n";
+#endif
             auto res = client.post<RpcReply<T>>(j);
             return res;
         }
