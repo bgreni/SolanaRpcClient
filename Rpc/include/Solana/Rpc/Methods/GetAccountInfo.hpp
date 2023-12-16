@@ -38,6 +38,11 @@ namespace Solana {
             };
         }
 
+<<<<<<< Updated upstream
+=======
+        explicit GetAccountInfo(std::string address) : key(address) {}
+
+>>>>>>> Stashed changes
         struct Config {
             Commitment commitment;
             std::optional<std::string> encoding;

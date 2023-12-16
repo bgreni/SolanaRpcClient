@@ -2,7 +2,6 @@
 
 #include "RpcMethod.hpp"
 #include <string>
-#include <string_view>
 #include <iostream>
 #include <optional>
 #include "Common.hpp"

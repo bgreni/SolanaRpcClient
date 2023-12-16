@@ -20,7 +20,7 @@ using Socket = beast::ssl_stream<beast::tcp_stream>;
 using Buffer = beast::flat_buffer;
 
 
-namespace Solana {
+namespace Solana::Network {
 
     using Request  = boost::beast::http::request<boost::beast::http::string_body>;
 

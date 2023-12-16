@@ -4,6 +4,7 @@
 #include "Solana/Rpc/Methods/GetBalance.hpp"
 #include "Solana/Rpc/Methods/GetBlockHeight.hpp"
 #include "Solana/Rpc/Methods/GetBlock.hpp"
+#include "Solana/Rpc/Methods/GetBlockProduction.hpp"
 #include "Solana/Rpc/Methods/GetAccountInfo.hpp"
 #include "Solana/Rpc/Methods/WithJsonReply.hpp"
 
@@ -32,7 +33,7 @@ namespace Solana {
             return res;
         }
     private:
-        HttpClient client;
+        Network::HttpClient client;
     };
 }
 

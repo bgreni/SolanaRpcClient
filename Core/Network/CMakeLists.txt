@@ -29,6 +29,6 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 
 source_group(
-        TREE "../../Rpc/include"
+        TREE "include"
         PREFIX "Header Files"
         FILES ${HEADER_LIST})
