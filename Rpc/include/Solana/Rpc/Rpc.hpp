@@ -6,6 +6,7 @@
 #include "Solana/Rpc/Methods/GetBlock.hpp"
 #include "Solana/Rpc/Methods/GetBlockProduction.hpp"
 #include "Solana/Rpc/Methods/GetAccountInfo.hpp"
+#include "Solana/Rpc/Methods/GetTransaction.hpp"
 #include "Solana/Rpc/Methods/WithJsonReply.hpp"
 
 

@@ -18,7 +18,8 @@ namespace Solana {
             MinContextSlot minContextSlot;
         };
 
-        explicit GetBalance(const std::string & address, const Config & config = {}) : address(address), config(config) {}
+        explicit GetBalance(const std::string & address, const Config & config = {})
+            : address(address), config(config) {}
 
         static Reply parseReply(const json & data) {
             return Reply {.value = data["result"]["value"].get<int64_t>()};

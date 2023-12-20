@@ -13,7 +13,7 @@ namespace Solana {
         }
 
         template <typename ...Args>
-        WithJsonReply(Args ...args) : inner({args...}) {}
+        explicit WithJsonReply(Args ...args) : inner(args...) {}
 
         std::string methodName() const override { return inner.methodName(); };
         json toJson() const override {

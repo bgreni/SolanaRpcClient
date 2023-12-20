@@ -53,31 +53,59 @@ namespace Solana {
     };
 
     enum EncodingType {
-        Json,
         JsonParsed,
         Base58,
-        Base64
+        Base64,
+        Json
     };
 
-    struct Encoding : ConfigParam<std::string> {
+    struct TransactionEncoding : ConfigParam<std::string> {
         template<typename T>
-        Encoding(const T & val) : ConfigParam<std::string>(val) {}
-        Encoding(EncodingType type)
-            : ConfigParam<std::string>([type]() {
-                switch (type) {
-                    case Json:
-                        return "json";
-                    case JsonParsed:
-                        return "jsonParsed";
-                    case Base58:
-                        return "base58";
-                    case Base64:
-                        return "base64";
-                }
-            }())
+        TransactionEncoding(const T & val) : ConfigParam<std::string>(val) {}
+        TransactionEncoding(EncodingType type)
+            : ConfigParam<std::string>(str(type))
         {}
 
-        Encoding() = default;
+        static std::string str(EncodingType t) {
+            switch (t) {
+                case JsonParsed:
+                    return "jsonParsed";
+                case Base58:
+                    return "base58";
+                case Base64:
+                    return "base64";
+                case Json:
+                    return "json";
+                default:
+                    throw std::runtime_error("Unsupported type");
+            }
+        }
+        TransactionEncoding() = default;
+
+        std::string name() const override {return "encoding";}
+    };
+
+    struct AccountEncoding : ConfigParam<std::string> {
+        template<typename T>
+        AccountEncoding(const T & val) : ConfigParam<std::string>(val) {}
+        AccountEncoding(EncodingType type)
+            : ConfigParam<std::string>(str(type))
+        {}
+
+        static std::string str(EncodingType t) {
+            switch (t) {
+                case JsonParsed:
+                    return "jsonParsed";
+                case Base58:
+                    return "base58";
+                case Base64:
+                    return "base64";
+                default:
+                    throw std::runtime_error("Unsupported type");
+            }
+        }
+
+        AccountEncoding() = default;
 
         std::string name() const override {return "encoding";}
     };

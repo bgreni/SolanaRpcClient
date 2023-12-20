@@ -16,7 +16,7 @@ namespace Solana {
 
         struct Config {
             Commitment commitment;
-            Encoding encoding;
+            AccountEncoding encoding;
         };
 
         GetBlock(int64_t slot, const Config & config = {}) :

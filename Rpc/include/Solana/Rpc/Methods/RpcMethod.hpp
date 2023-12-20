@@ -20,7 +20,9 @@ namespace Solana {
 
         static RpcReply<T> parse(std::string_view data) {
             const auto j = json::parse(data);
-            if (j.contains("error")) throw std::runtime_error("you got an error kid");
+            if (j.contains("error"))
+                throw std::runtime_error(
+                    "you got an error kid: " + j["error"].dump());
             return RpcReply {
                 .jsonrpc = j["jsonrpc"],
                 .id = j["id"].get<std::string>(),
