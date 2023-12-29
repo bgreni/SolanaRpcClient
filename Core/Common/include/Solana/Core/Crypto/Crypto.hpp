@@ -6,13 +6,13 @@
 namespace Solana::Crypto {
     class Keypair {
     public:
-        Keypair(PubKey pubKey, PrivateKey pk) : pubkey(pubKey), privateKey(pk){}
+        Keypair(Pubkey pubKey, PrivateKey pk) : pubkey(pubKey), privateKey(pk){}
 
         static Keypair generateKeyPair();
         static Keypair fromSecretKey(std::string_view sk);
 //        static Keypair fromPrivateKey(std::string_view pk);
 
-        PubKey pubkey;
+        Pubkey pubkey;
         PrivateKey privateKey;
     };
 }

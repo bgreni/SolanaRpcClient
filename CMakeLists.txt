@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.23)
 project(SolanaCPP LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 include(FetchContent)
 
@@ -22,4 +22,10 @@ add_subdirectory(Core)
 if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
     add_executable(app main.cpp)
     target_link_libraries(app PRIVATE Solana.Rpc)
+endif()
+
+set(BUILD_TEST ON CACHE BOOL "Whether to build tests")
+if (BUILD_TEST)
+    enable_testing()
+    add_subdirectory(test)
 endif()

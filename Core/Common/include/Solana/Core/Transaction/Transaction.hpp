@@ -1,14 +1,24 @@
 #pragma once
 #include "Solana/Core/Types/Types.hpp"
 #include <vector>
+#include "Message.hpp"
+#include "CompactArray.hpp"
 
 namespace Solana {
-    class Transaction {
+    class Txn {
     public:
-        using Signatures = std::vector<String<64>>;
+        using Signatures = Transaction::CompactArray<Bytes<64>>;
+
+        Buffer serialize() {
+            auto b = Buffer();
+            signatures.serialize(b);
+            message.serialize(b);
+            return b;
+        }
 
     private:
         Signatures signatures;
+        Transaction::Message message;
     };
 }
 

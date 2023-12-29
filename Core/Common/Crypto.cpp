@@ -15,7 +15,7 @@ Keypair Keypair::generateKeyPair() {
     size_t pubKeylen;
     EVP_PKEY_get_raw_public_key(pKey, nullptr, &pubKeylen);
 
-    PubKey pubKey;
+    Pubkey pubKey;
     EVP_PKEY_get_raw_public_key(pKey, pubKey.data(), &pubKeylen);
 
     size_t privKeyLen;
@@ -32,7 +32,7 @@ Keypair Keypair::fromSecretKey(std::string_view sk) {
     auto ret = Solana::Encoding::Base58::Decode(sk);
     PrivateKey privKey;
     std::copy_n(ret->begin(), 32, privKey.begin());
-    PubKey pubKey;
+    Pubkey pubKey;
     std::copy_n(ret->cbegin() + 32, 32, pubKey.begin());
 
 

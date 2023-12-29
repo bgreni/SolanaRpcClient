@@ -26,10 +26,6 @@ namespace Solana {
             if (req.hasParams())
                 j["params"] = req.toJson();
 
-#if !NDEBUG
-            #include <iostream>
-            std::cout << "SENDING: " << j.dump() << "\n";
-#endif
             auto res = client.post<RpcReply<T>>(j);
             return res;
         }
@@ -37,4 +33,11 @@ namespace Solana {
         Network::HttpClient client;
     };
 }
+
+
+
+//#if !NDEBUG
+//            #include <iostream>
+//            std::cout << "SENDING: " << j.dump() << "\n";
+//#endif
 

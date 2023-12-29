@@ -46,13 +46,14 @@
 #define GET_BYTES_NEEDED(type, var) Solana::BytesNeeded<type>::value +
 #define GET_BYTES_NEEDED_PAIR(pair) GET_BYTES_NEEDED pair
 
-#define ACCOUNT(S, ...) \
-  struct S {            \
-    template<typename T>\
+#define LAYOUT(S, ...) \
+  struct S {             \
+    bool operator==(const S&) const = default;                    \
+    template<typename T>                \
     void decode(const T & buffer) { \
         return AccountDecoder().Decode(buffer, MAP(GET_VAR_NAME_PAIR, __VA_ARGS__) std::placeholders::_1);   \
     }                   \
-    std::string & encode() {     \
+    Solana::Buffer & encode() {     \
         return AccountEncoder().Encode(MAP(GET_VAR_NAME_PAIR, __VA_ARGS__) std::placeholders::_1).getBuffer();  \
     }                   \
     static int space() { return MAP(GET_BYTES_NEEDED_PAIR, __VA_ARGS__) Solana::BytesNeeded<std::in_place_t>::value; }                    \
@@ -66,21 +67,21 @@ namespace Solana::Token {
         Frozen
     };
 
-    ACCOUNT(Mint,
-            (std::optional<PubKey>, mintAuthority),
-            (u64, supply),
-            (u8, decimals),
-            (bool, isInitialized),
-            (std::optional<PubKey>, freezeAuthority))
+    LAYOUT(Mint,
+           (std::optional<Pubkey>, mintAuthority),
+           (u64, supply),
+           (u8, decimals),
+           (bool, isInitialized),
+           (std::optional<Pubkey>, freezeAuthority))
 
-    ACCOUNT(Account,
-            (PubKey, mint),
-            (PubKey, owner),
-            (u64, amount),
-            (std::optional<PubKey>, delegate),
-            (TokenAccountState, state),
-            (std::optional<u64>, isNative),
-            (u64, delegatedAmount),
-            (std::optional<PubKey>, closeAuthority))
+    LAYOUT(Account,
+           (Pubkey, mint),
+           (Pubkey, owner),
+           (u64, amount),
+           (std::optional<Pubkey>, delegate),
+           (TokenAccountState, state),
+           (std::optional<u64>, isNative),
+           (u64, delegatedAmount),
+           (std::optional<Pubkey>, closeAuthority))
 }
 

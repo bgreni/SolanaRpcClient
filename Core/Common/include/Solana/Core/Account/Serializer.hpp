@@ -24,7 +24,7 @@ namespace TypeUtils {
         static const bool value = false;
     };
 
-    template<> struct is_pubkey<Solana::PubKey> {
+    template<> struct is_pubkey<Solana::Pubkey> {
         static const bool value = true;
     };
 
@@ -35,12 +35,14 @@ namespace TypeUtils {
     };
 
     template <int T>
-    struct is_string<Solana::String<T>>
+    struct is_string<Solana::Bytes<T>>
     {
         static const bool value = true;
     };
 
 }
+
+// TODO: Fully implemented all of the expected data types
 
 class AccountEncoder {
 public:
@@ -83,9 +85,9 @@ public:
         return *this;
     }
 
-    std::string & getBuffer() { return buffer; }
+    Solana::Buffer & getBuffer() { return buffer; }
 private:
-    std::string buffer{};
+    Solana::Buffer buffer{};
 };
 
 class AccountDecoder {
@@ -99,7 +101,7 @@ public:
 
 private:
 
-    void handlePubkey(uint8_t **offset, Solana::PubKey & value) {
+    void handlePubkey(uint8_t **offset, Solana::Pubkey & value) {
         std::copy_n(*offset, 32, value.begin());
         (*offset) += 32;
     }

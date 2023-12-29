@@ -6,8 +6,8 @@
 #include "Solana/Core/Encoding/Base58.hpp"
 // Using the anchor documentation space reference https://www.anchor-lang.com/docs/space
 
-// TODO: SUPPORT 128 bit int
 namespace Solana {
+
     using u8 = uint8_t;
     using i8 = int8_t;
     using u16 = uint16_t;
@@ -21,18 +21,36 @@ namespace Solana {
     using u128 = boost::multiprecision::uint128_t;
     using i128 = boost::multiprecision::int128_t;
 
-    template<int T>
-    class String : public std::array<unsigned char, T> {
-    public:
-        std::string toStdString() {
-            return Encoding::Base58::Encode(std::string{(const char *)this->data(), T});
+    class Buffer : public std::vector<u8> {
+        void serialize(std::vector<u8> & out) const {
+            for (auto byte : *this) {
+                out.push_back(byte);
+            }
         }
     };
 
-    class PubKey : public String<32> {
+    template<int T>
+    class Bytes : public std::array<u8, T> {
+    public:
+        void serialize(std::vector<u8> & out) const {
+            for (auto it = this->cbegin(); this->cbegin() != this->cend(); ++it) {
+                out.push_back(*it);
+            }
+        }
     };
 
-    class PrivateKey : public String<32>{};
+    class Pubkey : public Bytes<32> {
+    public:
+        std::string toStdString() {
+            return Encoding::Base58::Encode(std::string{(const char *)this->data(), 32});
+        }
+        static Pubkey fromString(const std::string & str) {
+            const auto decoded = Encoding::Base58::Decode(str);
+
+        }
+    };
+
+    class PrivateKey : public Bytes<32>{};
 
     template<typename T>
     struct BytesNeeded {
@@ -40,12 +58,12 @@ namespace Solana {
     };
 
     template<>
-    struct BytesNeeded<Solana::PubKey> {
+    struct BytesNeeded<Solana::Pubkey> {
         static const int value = 32;
     };
 
     template<int T>
-    struct BytesNeeded<Solana::String<T>> {
+    struct BytesNeeded<Solana::Bytes<T>> {
         static const int value = T + 4;
     };
 

@@ -9,7 +9,7 @@ namespace Solana::Transaction {
         u8 readOnlyAddresses;
         u8 readOnlyAddressNoSig;
 
-        void serialize(std::vector<unsigned char> & out) const override {
+        void serialize(Buffer & out) const override {
             out.push_back(requiredSigs);
             out.push_back(readOnlyAddresses);
             out.push_back(readOnlyAddressNoSig);

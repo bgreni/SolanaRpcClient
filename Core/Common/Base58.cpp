@@ -25,20 +25,20 @@ static const int8_t mapBase58[256] = {
     -1,-1,-1,-1,-1,-1,-1,-1, -1,-1,-1,-1,-1,-1,-1,-1,
 };
 
-std::string Base58::Encode(std::string_view input) {
+std::string Base58::Encode(const unsigned char* pbegin, const unsigned char* pend) {
     // Skip & count leading zeroes.
     int zeroes = 0;
     int length = 0;
-    while (input.size() > 0 && input[0] == 0) {
-        input = input.substr(1);
+    while (pbegin != pend && *pbegin == 0) {
+        pbegin++;
         zeroes++;
     }
     // Allocate enough space in big-endian base58 representation.
-    int size = input.size() * 138 / 100 + 1; // log(256) / log(58), rounded up.
+    int size = (pend - pbegin) * 138 / 100 + 1; // log(256) / log(58), rounded up.
     std::vector<unsigned char> b58(size);
     // Process the bytes.
-    while (input.size() > 0) {
-        int carry = input[0];
+    while (pbegin != pend) {
+        int carry = *pbegin;
         int i = 0;
         // Apply "b58 = b58 * 256 + ch".
         for (auto it = b58.rbegin(); (carry != 0 || i < length) && (it != b58.rend()); it++, i++) {
@@ -49,7 +49,7 @@ std::string Base58::Encode(std::string_view input) {
 
         assert(carry == 0);
         length = i;
-        input = input.substr(1);
+        pbegin++;
     }
     // Skip leading zeroes in base58 result.
     auto it = b58.begin() + (size - length);
@@ -62,8 +62,47 @@ std::string Base58::Encode(std::string_view input) {
     while (it != b58.end())
         str += pszBase58[*(it++)];
     return str;
-
 }
+//std::string Base58::Encode(std::string_view input) {
+//
+//    // Skip & count leading zeroes.
+//    int zeroes = 0;
+//    int length = 0;
+//    while (input.size() > 0 && input[0] == 0) {
+//        input = input.substr(1);
+//        zeroes++;
+//    }
+//    // Allocate enough space in big-endian base58 representation.
+//    int size = input.size() * 138 / 100 + 1; // log(256) / log(58), rounded up.
+//    std::vector<unsigned char> b58(size);
+//    // Process the bytes.
+//    while (input.size() > 0) {
+//        unsigned char carry = input[0];
+//        int i = 0;
+//        // Apply "b58 = b58 * 256 + ch".
+//        for (auto it = b58.rbegin(); (carry != 0 || i < length) && (it != b58.rend()); it++, i++) {
+//            carry += 256 * (*it);
+//            *it = carry % 58;
+//            carry /= 58;
+//        }
+//
+//        assert(carry == 0);
+//        length = i;
+//        input = input.substr(1);
+//    }
+//    // Skip leading zeroes in base58 result.
+//    auto it = b58.begin() + (size - length);
+//    while (it != b58.end() && *it == 0)
+//        it++;
+//    // Translate the result into a string.
+//    std::string str;
+//    str.reserve(zeroes + (b58.end() - it));
+//    str.assign(zeroes, '1');
+//    while (it != b58.end())
+//        str += pszBase58[*(it++)];
+//    return str;
+//
+//}
 std::optional<std::string> Base58::Decode(std::string_view input) {
     auto psz = input.data();
     // Skip leading spaces.

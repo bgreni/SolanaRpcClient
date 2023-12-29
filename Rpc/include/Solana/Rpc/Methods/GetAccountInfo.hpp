@@ -50,12 +50,8 @@ namespace Solana {
                     accountData = data.get<std::string>();
                 }
 
-                if (dataEncoding == "jsonParsed") {
-                    throw std::runtime_error("jsonParsed should be used the default json return type");
-                }
-
                 if (dataEncoding == "base58") {
-                    const auto decoded = Encoding::Base58::Decode(
+                    const auto decoded = *Encoding::Base58::Decode(
                         accountData);
                     account.decode(decoded);
                 }
