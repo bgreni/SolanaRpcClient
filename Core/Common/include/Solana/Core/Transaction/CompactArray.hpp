@@ -11,32 +11,35 @@ namespace Solana::Transaction {
         public std::vector<T>,
         public Component
     {
+        using std::vector<T>::vector;
         public:
+
+
             void serialize(Buffer & out) const override {
-                u16 lenBits = 0;
-                u16 Length = this->size();
-                if (Length > 0x3FFF) {
-                    u8 topTwo = (Length & 0x6000) >> 14;
-                    out.push_back(0xFF);
-                    out.push_back(0xFF);
-                    out.push_back(topTwo);
-                } else {
-                    if (Length <= MASK){
-                        lenBits = Length & MASK;
-                    } else {
-                        lenBits = 0xFF;
-                        auto nextSeven = Length & MID_SEVEN;
-                        lenBits += nextSeven;
-                    }
-                    out.push_back(Length & 0xFF);
-                    out.push_back((Length >> 8) & 0xFF);
+                auto len = this->size();
+                while (true) {
+                   u8 l = len & 0x7F;
+                   len >>= 7;
+                   if (len == 0) {
+                       out.push_back(l);
+                       break;
+                   } else {
+                       l |= 0x80;
+                       out.push_back(l);
+                   }
                 }
 
-                if constexpr (std::is_same_v<T, unsigned char>) {
+                if constexpr (std::is_same_v<T, u8>) {
                     for (auto el : *this) {
                         out.push_back(el);
                     }
-                } else {
+                }
+                else if constexpr (std::is_arithmetic_v<T>) {
+                    for (auto el : *this) {
+                        out.add(el);
+                    }
+                }
+                else {
                     for (auto & el : *this) {
                         el.serialize(out);
                     }

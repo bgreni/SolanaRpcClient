@@ -6,32 +6,22 @@
 #include "Solana/Core/Types/Types.hpp"
 
 namespace Solana::Transaction {
-    using BlockHash = Bytes<32>;
-    struct Message : public Component {
+    struct BlockHash : public Bytes<32> {
+        fromStr(BlockHash, 32)
+    };
+    struct Message {
 
-        using Addresses = CompactArray<Pubkey>;
-        struct AddressSection : public Component {
-            Addresses readWrite;
-            Addresses readOnly;
-
-            void serialize(Buffer &out) const override {
-                readWrite.serialize(out);
-                readOnly.serialize(out);
-            }
-        };
+        bool operator==(const Message & other) const = default;
 
         Header header;
-        AddressSection requiresSig;
-        AddressSection noSig;
+        CompactArray<Pubkey> addresses;
         BlockHash recentBlockhash;
-        CompactArray<Instruction> instructions;
-        void serialize(Buffer &out) const override {
+        CompactArray<CompiledInstruction> instructions;
+        void serialize(Buffer &out) const{
             header.serialize(out);
-            requiresSig.serialize(out);
-            noSig.serialize(out);
+            addresses.serialize(out);
             recentBlockhash.serialize(out);
             instructions.serialize(out);
         }
-
     };
 }

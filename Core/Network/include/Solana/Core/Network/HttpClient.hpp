@@ -36,12 +36,12 @@ namespace Solana::Network {
                 | boost::asio::ssl::context::no_sslv3
             );
             // TODO: have a more robust way to set url
-            std::regex re("(.+):\\/\\/(.+)\\/(.+)");
+            std::regex re("(.+):\\/\\/(.+)\\/");
             std::cmatch m;
             std::regex_match(endpoint.c_str(), m, re);
             service = m[1];
             this->endpoint = m[2];
-            targetBase = m[3];
+//            targetBase = m[3];
         }
         ~HttpClient() {
             ioc.join();

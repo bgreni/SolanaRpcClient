@@ -21,36 +21,78 @@ namespace Solana {
     using u128 = boost::multiprecision::uint128_t;
     using i128 = boost::multiprecision::int128_t;
 
+#define BYTES(thing) (u8*)thing.data()
+
     class Buffer : public std::vector<u8> {
-        void serialize(std::vector<u8> & out) const {
+        using vector<u8>::vector;
+    public:
+        Buffer() = default;
+        Buffer(std::string_view str) : std::vector<u8>(BYTES(str), BYTES(str) + str.size()) {}
+
+        template<typename T,
+                std::enable_if_t<std::is_arithmetic_v<T>, bool> = true>
+        void add(T integer) {
+            u8 * ptr = (u8 *)&integer;
+            for (int i = 0; i < sizeof(T); ++i) {
+                const auto byte = ptr[i];
+                this->push_back(byte);
+            }
+        }
+
+        void add(const std::string & str) {
+            for (auto ch : str) {
+                this->push_back(ch);
+            }
+        }
+
+        void serialize(Buffer & out) const {
             for (auto byte : *this) {
                 out.push_back(byte);
             }
         }
+
+        std::string toString() {
+            return Encoding::Base58::Encode(this->data(), this->data() + this->size());
+        }
     };
+
+#define fromStr(C, S) \
+    static C fromString(std::string_view str) { \
+        const auto decoded = *Encoding::Base58::Decode(str); \
+        assert(decoded.size() == S); \
+        C out{}; \
+        std::copy_n(BYTES(decoded), S, out.begin()); \
+        return out; \
+    }
 
     template<int T>
     class Bytes : public std::array<u8, T> {
     public:
         void serialize(std::vector<u8> & out) const {
-            for (auto it = this->cbegin(); this->cbegin() != this->cend(); ++it) {
-                out.push_back(*it);
+            for (auto byte : *this) {
+                out.push_back(byte);
             }
         }
+
+        fromStr(Bytes<T>, T)
     };
 
     class Pubkey : public Bytes<32> {
     public:
-        std::string toStdString() {
+        std::string toStdString() const {
             return Encoding::Base58::Encode(std::string{(const char *)this->data(), 32});
         }
-        static Pubkey fromString(const std::string & str) {
-            const auto decoded = Encoding::Base58::Decode(str);
 
+        bool operator<(const Pubkey & other) {
+            return this->toStdString() < other.toStdString();
         }
+
+        fromStr(Pubkey, 32)
     };
 
     class PrivateKey : public Bytes<32>{};
+
+    using Signature = Bytes<64>;
 
     template<typename T>
     struct BytesNeeded {

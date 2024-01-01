@@ -1,6 +1,7 @@
 
 #include "Solana/Core/Encoding/Base58.hpp"
 #include <cassert>
+#include <vector>
 
 using namespace Solana::Encoding;
 
@@ -116,7 +117,7 @@ std::optional<std::string> Base58::Decode(std::string_view input) {
         psz++;
     }
     // Allocate enough space in big-endian base256 representation.
-    int size = strlen(psz) * 733 /1000 + 1; // log(58) / log(256), rounded up.
+    int size = input.size() * 733 /1000 + 1; // log(58) / log(256), rounded up.
     std::vector<unsigned char> b256(size);
     // Process the characters.
     static_assert(std::size(mapBase58) == 256, "mapBase58.size() should be 256"); // guarantee not out of range

@@ -5,31 +5,32 @@
 
 namespace Solana::Programs::System {
 
-    const Pubkey ProgramId = Pubkey::fromString("11111111111111111111111111111111");
-
-    struct Transfer : public Transaction::Instruction {
+    struct Transfer {
 
         LAYOUT(Data,
+               (u32, number),
                (u64, lamports))
 
         Transfer(
-            const Pubkey & to,
             const Pubkey & from,
-            u64 lamports) : data(Data{.lamports = lamports}) {
+            const Pubkey & to,
+            u64 lamports)
+                : data(Data{.number=2, .lamports = lamports})
+                , toAccount(Transaction::Account {
+                        .key = to,
+                        .isSigner = false,
+                        .isWritable = true,
+                })
+                , fromAccount(Transaction::Account {
+                        .key = from,
+                        .isSigner = true,
+                        .isWritable = true,
+                }) {}
 
-            const auto toAccount = Transaction::Account {
-                .key = to,
-                .isSigner = false,
-                .isWritable = true,
-            };
+        Transaction::Instruction toInstruction();
 
-            const auto fromAccount = Transaction::Account {
-                .key = from,
-                .isSigner = true,
-                .isWritable = true,
-            };
-//             programId
-        }
+        Transaction::Account toAccount;
+        Transaction::Account fromAccount;
         Data data;
     };
 };

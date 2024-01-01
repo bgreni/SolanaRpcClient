@@ -6,6 +6,7 @@
 #include "Common.hpp"
 #include "Solana/Core/Encoding/Base58.hpp"
 #include "Solana/Core/Encoding/Base64.hpp"
+#include "Solana/Core/Types/Types.hpp"
 
 template<typename T>
 struct is_json {
@@ -26,7 +27,7 @@ namespace Solana {
         struct Reply {
             bool executable;
             int64_t lamports;
-            std::string owner;
+            Pubkey owner;
             int64_t rentEpoch;
             int64_t space;
             AccountStruct accountData;
@@ -53,7 +54,7 @@ namespace Solana {
                 if (dataEncoding == "base58") {
                     const auto decoded = *Encoding::Base58::Decode(
                         accountData);
-                    account.decode(decoded);
+                    account.decode(Buffer(decoded));
                 }
                 else if (dataEncoding == "base64") {
                     std::string out;
@@ -61,7 +62,7 @@ namespace Solana {
                     if (!error.empty()) {
                         throw std::runtime_error("Failed to decode base64 string: " + error);
                     }
-                    account.decode(out);
+                    account.decode(Buffer(out));
                 }
                 else {
                     throw std::runtime_error("Unsupported encoding type: " + dataEncoding);
@@ -69,11 +70,12 @@ namespace Solana {
             }
 
             return Reply {
-                    .accountData = account,
                     .executable = d["executable"].get<bool>(),
                     .lamports = d["lamports"].get<int64_t>(),
+                    .owner = Pubkey::fromString(d["owner"].get<std::string>()),
                     .rentEpoch = d["rentEpoch"].get<int64_t>(),
-                    .space = d["space"].get<int64_t>()
+                    .space = d["space"].get<int64_t>(),
+                    .accountData = account,
             };
         }
         struct Config {

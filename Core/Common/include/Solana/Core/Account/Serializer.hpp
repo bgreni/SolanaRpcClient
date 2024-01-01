@@ -44,10 +44,10 @@ namespace TypeUtils {
 
 // TODO: Fully implemented all of the expected data types
 
-class AccountEncoder {
+class LayoutEncoder {
 public:
     template <typename ... T>
-    constexpr AccountEncoder & Encode(const T& ... types) {
+    constexpr LayoutEncoder & Encode(const T& ... types) {
         // Encode((types...));
         (Encode(types), ...);
         // printf("asd");
@@ -55,7 +55,7 @@ public:
     }
 
     template<typename T>
-    constexpr AccountEncoder & Encode(const T value) {
+    constexpr LayoutEncoder & Encode(const T value) {
         if constexpr (std::is_integral<T>::value) {
             const size_t typeSize = sizeof(T);
             uint8_t offset = 0;
@@ -90,10 +90,10 @@ private:
     Solana::Buffer buffer{};
 };
 
-class AccountDecoder {
+class LayoutDecoder {
 public:
-    template <typename T, typename ... Types>
-    void Decode(const T & bufferBegin, Types& ... retrieveValues)
+    template <typename ... Types>
+    void Decode(const Solana::Buffer & bufferBegin, Types& ... retrieveValues)
     {
         uint8_t *offset = (uint8_t *)bufferBegin.data();
         (DecodeInternal<Types>(&offset, retrieveValues), ...);

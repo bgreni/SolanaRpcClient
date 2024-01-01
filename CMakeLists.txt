@@ -21,7 +21,7 @@ add_subdirectory(Core)
 
 if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
     add_executable(app main.cpp)
-    target_link_libraries(app PRIVATE Solana.Rpc)
+    target_link_libraries(app PRIVATE Solana.Rpc Solana.Core.Programs)
 endif()
 
 set(BUILD_TEST ON CACHE BOOL "Whether to build tests")

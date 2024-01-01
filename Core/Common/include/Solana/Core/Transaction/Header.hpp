@@ -5,9 +5,11 @@
 
 namespace Solana::Transaction {
     struct Header : public Component {
-        u8 requiredSigs;
-        u8 readOnlyAddresses;
-        u8 readOnlyAddressNoSig;
+        bool operator==(const Header & other) const = default;
+
+        u8 requiredSigs = 0;
+        u8 readOnlyAddresses = 0;
+        u8 readOnlyAddressNoSig = 0;
 
         void serialize(Buffer & out) const override {
             out.push_back(requiredSigs);

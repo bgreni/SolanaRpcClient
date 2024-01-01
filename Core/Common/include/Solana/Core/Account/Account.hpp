@@ -49,12 +49,11 @@
 #define LAYOUT(S, ...) \
   struct S {             \
     bool operator==(const S&) const = default;                    \
-    template<typename T>                \
-    void decode(const T & buffer) { \
-        return AccountDecoder().Decode(buffer, MAP(GET_VAR_NAME_PAIR, __VA_ARGS__) std::placeholders::_1);   \
+    void decode(const Solana::Buffer & buffer) { \
+        return LayoutDecoder().Decode(buffer, MAP(GET_VAR_NAME_PAIR, __VA_ARGS__) std::placeholders::_1);   \
     }                   \
-    Solana::Buffer & encode() {     \
-        return AccountEncoder().Encode(MAP(GET_VAR_NAME_PAIR, __VA_ARGS__) std::placeholders::_1).getBuffer();  \
+    Solana::Buffer encode() {     \
+        return LayoutEncoder().Encode(MAP(GET_VAR_NAME_PAIR, __VA_ARGS__) std::placeholders::_1).getBuffer();  \
     }                   \
     static int space() { return MAP(GET_BYTES_NEEDED_PAIR, __VA_ARGS__) Solana::BytesNeeded<std::in_place_t>::value; }                    \
     MAP(DECL_VAR_PAIR, __VA_ARGS__)      \

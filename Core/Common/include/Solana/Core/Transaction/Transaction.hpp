@@ -5,10 +5,14 @@
 #include "CompactArray.hpp"
 
 namespace Solana {
+    namespace Transaction {
+        using Signatures = Transaction::CompactArray<Signature>;
+    }
     class Txn {
     public:
-        using Signatures = Transaction::CompactArray<Bytes<64>>;
-
+        Txn(const Transaction::Signatures & signatures,
+            const Transaction::Message & message)
+            : signatures(signatures), message(message){}
         Buffer serialize() {
             auto b = Buffer();
             signatures.serialize(b);
@@ -17,7 +21,7 @@ namespace Solana {
         }
 
     private:
-        Signatures signatures;
+        Transaction::Signatures signatures;
         Transaction::Message message;
     };
 }

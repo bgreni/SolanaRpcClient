@@ -7,6 +7,8 @@
 #include "Solana/Rpc/Methods/GetBlockProduction.hpp"
 #include "Solana/Rpc/Methods/GetAccountInfo.hpp"
 #include "Solana/Rpc/Methods/GetTransaction.hpp"
+#include "Solana/Rpc/Methods/GetLatestBlockhash.hpp"
+#include "Solana/Rpc/Methods/SimulateTransaction.hpp"
 #include "Solana/Rpc/Methods/WithJsonReply.hpp"
 
 
@@ -26,6 +28,11 @@ namespace Solana {
             if (req.hasParams())
                 j["params"] = req.toJson();
 
+#if !NDEBUG
+            #include <iostream>
+            std::cout << "SENDING: " << j.dump() << "\n";
+#endif
+
             auto res = client.post<RpcReply<T>>(j);
             return res;
         }
@@ -33,11 +40,4 @@ namespace Solana {
         Network::HttpClient client;
     };
 }
-
-
-
-//#if !NDEBUG
-//            #include <iostream>
-//            std::cout << "SENDING: " << j.dump() << "\n";
-//#endif
 
