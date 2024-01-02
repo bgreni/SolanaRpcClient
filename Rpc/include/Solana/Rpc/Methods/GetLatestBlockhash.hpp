@@ -5,10 +5,18 @@
 namespace Solana {
     struct GetLatestBlockhash : public RpcMethod {
 
-        using Reply = json;
+        struct Reply {
+            std::string blockHash;
+            u64 lastValidBlockHeight;
+        };
 
         static Reply parseReply(const json & j) {
-            return j["result"];
+            auto v = j["result"]["value"];
+
+            return Reply {
+                .blockHash = v["blockhash"].get<std::string>(),
+                .lastValidBlockHeight = v["lastValidBlockHeight"].get<u64>()
+            };
         }
 
         explicit GetLatestBlockhash() = default;

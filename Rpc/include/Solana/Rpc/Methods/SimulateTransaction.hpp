@@ -5,14 +5,14 @@
 
 namespace Solana {
     struct SimulateTransaction : public RpcMethod {
-        struct Reply {
-            json result;
-        };
+        using Reply = json;
 
         static Reply parseReply(const json & j) {
-            return Reply {
-                .result = j["result"]
-            };
+//            return Reply {
+//                .result = j["result"]
+//            };
+
+            return j["result"];
         }
 
         explicit SimulateTransaction(

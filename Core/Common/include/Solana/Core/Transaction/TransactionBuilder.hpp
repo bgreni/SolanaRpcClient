@@ -9,16 +9,12 @@
 
 namespace Solana::Transaction {
 
-    template<class T>
-    concept IsInstruction = std::is_base_of<ConcreteInstruction, T>::value;
-
     class TransactionBuilder {
     public:
         TransactionBuilder(const BlockHash & recentHash, Pubkey feepayer)
             : recentBlockHash(recentHash), feePayer(feepayer){}
 
-        template<IsInstruction T>
-        TransactionBuilder & add(const T & instruction) {
+        TransactionBuilder & add(const ConcreteInstruction & instruction) {
             return add(instruction.toInstruction());
         }
 
