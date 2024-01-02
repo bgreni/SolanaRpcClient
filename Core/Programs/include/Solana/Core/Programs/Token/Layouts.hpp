@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Solana/Core/Account/Account.hpp"
+#include "Solana/Core/Encoding/Layout.hpp"
 
 namespace Solana::Programs::Token {
     enum TokenAccountState : u8 {

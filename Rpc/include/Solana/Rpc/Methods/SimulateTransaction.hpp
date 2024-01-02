@@ -8,9 +8,6 @@ namespace Solana {
         using Reply = json;
 
         static Reply parseReply(const json & j) {
-//            return Reply {
-//                .result = j["result"]
-//            };
 
             return j["result"];
         }
