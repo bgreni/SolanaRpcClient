@@ -51,7 +51,7 @@ namespace Solana {
             }
         }
 
-        std::string toString() {
+        std::string toString() const {
             return Encoding::Base58::Encode(this->data(), this->data() + this->size());
         }
     };

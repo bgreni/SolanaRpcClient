@@ -5,7 +5,7 @@
 
 namespace Solana::Programs::System {
 
-    struct Transfer {
+    struct Transfer : public Transaction::ConcreteInstruction {
 
         LAYOUT(Data,
                (u32, number),
@@ -27,7 +27,7 @@ namespace Solana::Programs::System {
                         .isWritable = true,
                 }) {}
 
-        Transaction::Instruction toInstruction();
+        Transaction::Instruction toInstruction() const override;
 
         Transaction::Account toAccount;
         Transaction::Account fromAccount;

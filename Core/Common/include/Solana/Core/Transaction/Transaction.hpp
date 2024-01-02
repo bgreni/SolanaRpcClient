@@ -13,7 +13,7 @@ namespace Solana {
         Txn(const Transaction::Signatures & signatures,
             const Transaction::Message & message)
             : signatures(signatures), message(message){}
-        Buffer serialize() {
+        Buffer serialize() const {
             auto b = Buffer();
             signatures.serialize(b);
             message.serialize(b);

@@ -10,7 +10,7 @@ namespace {
     const Pubkey ProgramId = Pubkey::fromString("11111111111111111111111111111111");
 }
 
-Solana::Transaction::Instruction Solana::Programs::System::Transfer::toInstruction() {
+Solana::Transaction::Instruction Solana::Programs::System::Transfer::toInstruction() const {
 
     return Solana::Transaction::Instruction {
         .programId = ProgramId,

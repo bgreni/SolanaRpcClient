@@ -25,9 +25,13 @@ namespace Solana::Transaction {
         Buffer data;
     };
 
+    struct ConcreteInstruction {
+        virtual Instruction toInstruction() const = 0;
+    };
+
     struct CompiledInstruction {
-        u32 programIndex;
-        CompactArray<u32> addressIndices;
+        u8 programIndex;
+        CompactArray<u8> addressIndices;
         Buffer data;
         void serialize(Buffer & out) const {
             out.add(programIndex);

@@ -47,7 +47,7 @@ Message TransactionBuilder::compileMessage() {
     for (auto & account : accounts) acVector.push_back(account);
 
     Header header{};
-    CompactArray<Pubkey> keys{};
+    AddressSection keys{};
     for (auto & ac : acVector) {
         if (ac.isSigner) {
             ++header.requiredSigs;
@@ -63,8 +63,8 @@ Message TransactionBuilder::compileMessage() {
     CompactArray<CompiledInstruction> compiledIns{};
     compiledIns.reserve(instructions.size());
 
-    const auto indexOf = [&](const Pubkey & key) -> u32 {
-        for (size_t i = 0; i < keys.size(); ++i) {
+    const auto indexOf = [&](const Pubkey & key) -> u8 {
+        for (u8 i = 0; i < keys.size(); ++i) {
             if (keys[i].toStdString() == key.toStdString()) {
                 return i;
             }
@@ -73,7 +73,7 @@ Message TransactionBuilder::compileMessage() {
     };
 
     for (auto & ins : instructions) {
-        CompactArray<u32> addresses(ins.accounts.size());
+        CompactArray<u8> addresses(ins.accounts.size());
         std::transform(
                 ins.accounts.begin(),
                 ins.accounts.end(),
@@ -88,10 +88,9 @@ Message TransactionBuilder::compileMessage() {
         });
     }
 
-    return Message {
-        .header = header,
-        .addresses = keys,
-        .recentBlockhash = recentBlockHash,
-        .instructions = compiledIns
-    };
+    return Message(
+        header,
+        keys,
+        recentBlockHash,
+        compiledIns);
 }

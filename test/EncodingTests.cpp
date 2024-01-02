@@ -20,8 +20,8 @@ namespace {
 LAYOUT(TestAccount, (u32, t1), (u16, t2))
 
 TEST(CLASS, Pukey_B58) {
-    const auto decoded = *Base58::Decode(pubKeyString);
-    EXPECT_EQ(pubKeyString, Base58::Encode(decoded));
+    const auto decoded = Pubkey::fromString(pubKeyString);
+    EXPECT_EQ(pubKeyString, decoded.toStdString());
 }
 
 TEST(CLASS, TestSerializePubkey) {
@@ -29,7 +29,7 @@ TEST(CLASS, TestSerializePubkey) {
     Buffer buf{};
     key.serialize(buf);
     auto expected = Buffer{2, 32, 45, 56, 34, 64, 64, 34, 34, 35, 34, 65, 57, 34, 45, 34, 45, 64, 34, 43, 34, 34, 34, 43, 43, 43, 34, 56, 56, 56, 45, 98};
-    ASSERT_EQ(expected, buf);
+    EXPECT_EQ(expected, buf);
 }
 
 TEST(CLASS, TestSerializeCompactArrayPubkey) {
@@ -70,7 +70,7 @@ TEST(CLASS, CompactArraySerializationTest) {
     };
     Buffer buf; arr.serialize(buf);
     auto expected = Buffer{3, 1, 255, 67};
-    ASSERT_EQ(expected, buf);
+    EXPECT_EQ(expected, buf);
 }
 
 TEST(CLASS, HeaderSerializationTest) {
@@ -88,61 +88,103 @@ TEST(CLASS, InstructionSerializationTest) {
     LAYOUT(TestLayout, (u32, t1), (u64, t2))
     auto ins = CompiledInstruction {
         .programIndex = 3,
-        .addressIndices = CompactArray<u32>{ 12, 34 },
+        .addressIndices = CompactArray<u8>{ 12, 34 },
         .data = TestLayout{.t1 = 23, .t2 = 100}.encode()
     };
     Buffer buf;
     ins.serialize(buf);
     auto expected = Buffer{
-        3, 0, 0, 0,
-        2, 12, 0, 0, 0,
-        34, 0, 0, 0,
+        3,
+        2, 12, 34,
         12, 23, 0, 0, 0,
         100, 0, 0, 0, 0, 0, 0, 0,
     };
     EXPECT_EQ(expected, buf);
 }
 
-TEST(CLASS, TxnMessageSerializationTest) {
+TEST(CLASS, CompactArrayCompiledInstructionSerializationTest) {
+    auto arr = CompactArray<CompiledInstruction> {
+        CompiledInstruction {
+            .programIndex = 3,
+            .addressIndices = {1, 2},
+            .data = Buffer{2, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0}
+        }
+    };
+
+    Buffer buf{};
+    arr.serialize(buf);
+
+    auto expected = Buffer{
+        1, 3,
+        2, 1, 2,
+        12, 2, 0, 0, 0,
+        100, 0, 0, 0, 0, 0, 0, 0,
+    };
+
+    EXPECT_EQ(expected, buf);
+}
+
+TEST(CLASS, TransferSerializationTest) {
     auto kp = Keypair::fromSecretKey("3ffS3Y7v2iVFjpxe83WK6RxzYwCpfbVwvvEyuG52pyrvf6umUiVXUXLWKsHwRUKUtyhP99LfV4ciNYuWx2gRhhKd");
+    auto transfer = Programs::System::Transfer(
+        kp.pubkey,
+        Pubkey::fromString("5dEU1ec2Dw6C8v1jhtnRN6ZYnnVE54Yn3hJDh4U4fyZJ"),
+        100
+    );
+
+    auto buf = transfer.data.encode();
+    auto expected = Buffer{2, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0};
+    EXPECT_EQ(buf, expected);
+}
+
+TEST(CLASS, TxnMessageSerializationTest) {
+
+    auto signer = Pubkey::fromString("6fY6rYZyJcNJsBkQkkAS64nS4LRWcLdkKAs1eYWqJpEb");
 
     auto builder = TransactionBuilder(
-            BlockHash::fromString("4C76AqhSHrWND8tuqvZ37p62ssdtK4NGsfCm5kMUhNJt"), kp.pubkey)
+            BlockHash::fromString("4C76AqhSHrWND8tuqvZ37p62ssdtK4NGsfCm5kMUhNJt"), signer)
             .add(Programs::System::Transfer(
-//                            Pubkey::fromString("J9BU6Xo7G2BEct4tfEd2SVqMA2P7x8sTPyNq8ibm5hM2"),
-                    Pubkey::fromString("J9BU6Xo7G2BEct4tfEd2SVqMA2P7x8sTPyNq8ibm5hM2"),
-                    Pubkey::fromString("STEPNq2UGeGSzCyGVr2nMQAzf8xuejwqebd84wcksCK"),
+                    signer,
+                    Pubkey::fromString("5dEU1ec2Dw6C8v1jhtnRN6ZYnnVE54Yn3hJDh4U4fyZJ"),
                     100
             ).toInstruction());
-    builder.sign(kp);
 
     auto message = builder.compileMessage();
 
     auto header = Header{};
-    header.requiredSigs = 2;
+    header.requiredSigs = 1;
     header.readOnlyAddresses = 0;
     header.readOnlyAddressNoSig = 1;
-    const auto expected = Message {
-        .header = header,
-        .addresses = CompactArray<Pubkey>{
+    const auto expected = Message(
+        header,
+        AddressSection{
             Pubkey::fromString("6fY6rYZyJcNJsBkQkkAS64nS4LRWcLdkKAs1eYWqJpEb"),
-            Pubkey::fromString("J9BU6Xo7G2BEct4tfEd2SVqMA2P7x8sTPyNq8ibm5hM2"),
-            Pubkey::fromString("STEPNq2UGeGSzCyGVr2nMQAzf8xuejwqebd84wcksCK"),
+            Pubkey::fromString("5dEU1ec2Dw6C8v1jhtnRN6ZYnnVE54Yn3hJDh4U4fyZJ"),
             Pubkey::fromString("11111111111111111111111111111111")
         },
-        .recentBlockhash = BlockHash::fromString("4C76AqhSHrWND8tuqvZ37p62ssdtK4NGsfCm5kMUhNJt"),
-        .instructions = CompactArray<CompiledInstruction> {
+        BlockHash::fromString("4C76AqhSHrWND8tuqvZ37p62ssdtK4NGsfCm5kMUhNJt"),
+        CompactArray<CompiledInstruction> {
             CompiledInstruction {
-                .programIndex = 3,
-                .addressIndices = {1, 2},
+                .programIndex = 2,
+                .addressIndices = {0, 1},
                 .data = Buffer{2, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0}
             }
         }
-    };
+    );
 
-    ASSERT_EQ(expected, message);
+    EXPECT_EQ(expected, message);
 
-    const std::string expectedTxn = "5E1UgTjFsP3vvX8RxgXgXMBq6LPcgU9amFnj9gbgkmMkUy2RhGfpjRGB9BYEwdNDQyPV4VR4cmMpFyLukpyUWZEgSCm4DNaZn25PijmyM5zCmgSTF8gff5NhLrVkeymFkPZayJpexxPG1QurskRHeVjMiPoNYoXqgTgpqkkUdkpbtjP3F36nx3Urk8quw4LSREtUSS1s75i9yW12wwfAa7RPdkU4zvHBXNQVyR1mQgcQ7hBUWmEtVZi7";
+    const std::string expectedTxn = "87PYsNDxaKYiA1gma7e34RnUZ5aXvZuKdzHjYCuPWhjHGHMoH6q2DDqrZX6XzEWHhteu7VFK4bNy1v1AKUFZjmNNvHPTVH8vZ5x3JfbZ9mwScaVjYbghDUaYt48wT75v9WLMvpzQdHD1BXh8pYydufKgasmYGCAayxE1Vf4X9zeokymCvum1q4r2wgqCZZuLRFKrUCVJJCm5";
 
-    ASSERT_EQ(expectedTxn, builder.serializeMessage().toString());
+    const auto decoded = *Encoding::Base58::Decode(expectedTxn);
+
+    const auto actual = builder.serializeMessage();
+
+    EXPECT_EQ(Buffer(decoded), actual);
+
+    EXPECT_EQ(
+        decoded.size(),
+        actual.size());
+
+    EXPECT_EQ(expectedTxn, actual.toString());
 }

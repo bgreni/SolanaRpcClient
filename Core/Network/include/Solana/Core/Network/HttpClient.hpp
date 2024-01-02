@@ -17,7 +17,7 @@ namespace ssl   = net::ssl;
 using net::ip::tcp;
 
 using Socket = beast::ssl_stream<beast::tcp_stream>;
-using Buffer = beast::flat_buffer;
+using ResponseBuffer = beast::flat_buffer;
 
 
 namespace Solana::Network {
@@ -91,7 +91,7 @@ namespace Solana::Network {
                     r.set(http::field::host, endpoint);
                     auto sent = http::async_write(s, r, yield);
 
-                    Buffer buffer{};
+                    ResponseBuffer buffer{};
 
                     http::response<http::string_body> res;
                     auto received = http::async_read(s, buffer, res, yield);

@@ -52,35 +52,12 @@
     void decode(const Solana::Buffer & buffer) { \
         return LayoutDecoder().Decode(buffer, MAP(GET_VAR_NAME_PAIR, __VA_ARGS__) std::placeholders::_1);   \
     }                   \
-    Solana::Buffer encode() {     \
+    Solana::Buffer encode() const {     \
         return LayoutEncoder().Encode(MAP(GET_VAR_NAME_PAIR, __VA_ARGS__) std::placeholders::_1).getBuffer();  \
     }                   \
     static int space() { return MAP(GET_BYTES_NEEDED_PAIR, __VA_ARGS__) Solana::BytesNeeded<std::in_place_t>::value; }                    \
     MAP(DECL_VAR_PAIR, __VA_ARGS__)      \
   };
 
-namespace Solana::Token {
-    enum TokenAccountState : u8 {
-        Uninitialized,
-        Initialized,
-        Frozen
-    };
 
-    LAYOUT(Mint,
-           (std::optional<Pubkey>, mintAuthority),
-           (u64, supply),
-           (u8, decimals),
-           (bool, isInitialized),
-           (std::optional<Pubkey>, freezeAuthority))
-
-    LAYOUT(Account,
-           (Pubkey, mint),
-           (Pubkey, owner),
-           (u64, amount),
-           (std::optional<Pubkey>, delegate),
-           (TokenAccountState, state),
-           (std::optional<u64>, isNative),
-           (u64, delegatedAmount),
-           (std::optional<Pubkey>, closeAuthority))
-}
 
