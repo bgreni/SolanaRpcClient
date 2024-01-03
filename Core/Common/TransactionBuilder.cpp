@@ -88,6 +88,7 @@ Message TransactionBuilder::compileMessage() {
         });
     }
 
+    header.version += version;
     return Message(
         header,
         keys,

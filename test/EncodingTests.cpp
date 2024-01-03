@@ -74,13 +74,10 @@ TEST(CLASS, CompactArraySerializationTest) {
 }
 
 TEST(CLASS, HeaderSerializationTest) {
-    auto header = Header{};
-    header.requiredSigs = 3;
-    header.readOnlyAddresses = 2;
-    header.readOnlyAddressNoSig = 1;
+    auto header = Header(0, 3, 2, 1);
     Buffer buf;
     header.serialize(buf);
-    auto expected = Buffer{ 3, 2, 1 };
+    auto expected = Buffer{(1 << 7), 3, 2, 1 };
     EXPECT_EQ(expected, buf);
 }
 
@@ -147,14 +144,11 @@ TEST(CLASS, TxnMessageSerializationTest) {
                     signer,
                     Pubkey::fromString("5dEU1ec2Dw6C8v1jhtnRN6ZYnnVE54Yn3hJDh4U4fyZJ"),
                     100
-            ).toInstruction());
+            ));
 
     auto message = builder.compileMessage();
 
-    auto header = Header{};
-    header.requiredSigs = 1;
-    header.readOnlyAddresses = 0;
-    header.readOnlyAddressNoSig = 1;
+    auto header = Header(0, 1, 0, 1);
     const auto expected = Message(
         header,
         AddressSection{
@@ -174,7 +168,7 @@ TEST(CLASS, TxnMessageSerializationTest) {
 
     EXPECT_EQ(expected, message);
 
-    const std::string expectedTxn = "87PYsNDxaKYiA1gma7e34RnUZ5aXvZuKdzHjYCuPWhjHGHMoH6q2DDqrZX6XzEWHhteu7VFK4bNy1v1AKUFZjmNNvHPTVH8vZ5x3JfbZ9mwScaVjYbghDUaYt48wT75v9WLMvpzQdHD1BXh8pYydufKgasmYGCAayxE1Vf4X9zeokymCvum1q4r2wgqCZZuLRFKrUCVJJCm5";
+    const std::string expectedTxn = "6GhS2ZJZxJoJbYDstaxrESoUWEMqED9cYc8gvsFwomUHGvQCYxQY1bSHNmXHJYNGvtptbbWSEFe3y2XukfuVZxJRLbCa4zq5zrDHK2fr5sP9pgh2bKCqNz5zFvWzty9f3BhgeGwc35SK9XZE58xpTdhoE8aaKJD1o28hfab5yPiwcNJ7ppXykyKGbshoq32E2SBMYYbqiGAcNMHy";
 
     const auto decoded = *Encoding::Base58::Decode(expectedTxn);
 

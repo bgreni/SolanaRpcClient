@@ -9,6 +9,7 @@
 #include "Solana/Rpc/Methods/GetTransaction.hpp"
 #include "Solana/Rpc/Methods/GetLatestBlockhash.hpp"
 #include "Solana/Rpc/Methods/SimulateTransaction.hpp"
+#include "Solana/Rpc/Methods/SendTransaction.hpp"
 #include "Solana/Rpc/Methods/WithJsonReply.hpp"
 
 

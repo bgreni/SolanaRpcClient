@@ -23,6 +23,11 @@ namespace Solana::Transaction {
             return *this;
         }
 
+        TransactionBuilder & setVersion(u8 v) {
+            version = v;
+            return *this;
+        }
+
         Txn build() {
             return Txn(
                 sigs,
@@ -34,12 +39,12 @@ namespace Solana::Transaction {
         void sign(const Solana::Crypto::Keypair & kp);
         Message compileMessage();
 
-
     private:
         BlockHash recentBlockHash;
         Signatures sigs;
         std::vector<Pubkey> signers;
         std::vector<Instruction> instructions;
         Pubkey feePayer;
+        u8 version = 0;
     };
 }

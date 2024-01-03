@@ -10,6 +10,18 @@ namespace Solana::Transaction {
         fromStr(BlockHash, 32)
     };
 
+    struct AddressTableLookup {
+        Pubkey key;
+        CompactArray<u8> writableIndices;
+        CompactArray<u8> readonlyIndices;
+
+        void serialize(Buffer & out) const {
+            key.serialize(out);
+            writableIndices.serialize(out);
+            readonlyIndices.serialize(out);
+        }
+    };
+
     using AddressSection = CompactArray<Pubkey>;
 
     struct Message : public Component {
@@ -31,11 +43,17 @@ namespace Solana::Transaction {
         AddressSection addresses;
         BlockHash recentBlockhash;
         CompactArray<CompiledInstruction> instructions;
+
+        // This isn't fully implemented yet, just doing this
+        // as upfront work for supporting versioned txns
+        CompactArray<AddressTableLookup> lookupTable = {};
+
         void serialize(Buffer & out) const override {
             header.serialize(out);
             addresses.serialize(out);
             recentBlockhash.serialize(out);
             instructions.serialize(out);
+            lookupTable.serialize(out);
         }
     };
 }

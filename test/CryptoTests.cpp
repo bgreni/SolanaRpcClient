@@ -17,6 +17,7 @@ namespace Solana::Crypto {
 
         auto kp = Keypair::fromSecretKey("3ffS3Y7v2iVFjpxe83WK6RxzYwCpfbVwvvEyuG52pyrvf6umUiVXUXLWKsHwRUKUtyhP99LfV4ciNYuWx2gRhhKd");
 
+
         const auto buf = Buffer(*message);
 
         EXPECT_EQ(Encoding::Base58::Encode(buf.data(), buf.data() + buf.size()), TransferTxn);
