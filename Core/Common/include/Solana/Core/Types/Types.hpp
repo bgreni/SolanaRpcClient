@@ -4,7 +4,6 @@
 #include <array>
 #include <boost/multiprecision/cpp_int.hpp>
 #include "Solana/Core/Encoding/Base58.hpp"
-#include "nlohmann/json.hpp"
 // Using the anchor documentation space reference https://www.anchor-lang.com/docs/space
 
 namespace Solana {
@@ -54,6 +53,10 @@ namespace Solana {
 
         std::string toString() const {
             return Encoding::Base58::Encode(this->data(), this->data() + this->size());
+        }
+
+        std::string toBase64() const {
+            return Encoding::Base64::Encode({this->data(), this->data() + this->size()});
         }
     };
 

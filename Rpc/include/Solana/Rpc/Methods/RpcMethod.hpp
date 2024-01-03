@@ -1,6 +1,7 @@
 #pragma once
 #include "nlohmann/json.hpp"
 #include <iostream>
+#include "Solana/Rpc/Methods/Common.hpp"
 
 using json = nlohmann::json;
 
