@@ -4,7 +4,6 @@
 
 using json = nlohmann::json;
 
-
 namespace Solana {
     struct RpcMethod {
         virtual json toJson() const = 0;

@@ -4,6 +4,7 @@
 #include <array>
 #include <boost/multiprecision/cpp_int.hpp>
 #include "Solana/Core/Encoding/Base58.hpp"
+#include "nlohmann/json.hpp"
 // Using the anchor documentation space reference https://www.anchor-lang.com/docs/space
 
 namespace Solana {

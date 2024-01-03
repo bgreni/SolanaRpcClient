@@ -19,7 +19,7 @@ namespace Solana {
             AccountEncoding encoding;
         };
 
-        GetBlock(int64_t slot, const Config & config = {}) :
+        explicit GetBlock(int64_t slot, const Config & config = {}) :
             slot(slot),
             config(config)
         {}

@@ -12,6 +12,6 @@ include(GoogleTest)
 
 foreach(X IN ITEMS EncodingTests JsonReplyCompileTest CryptoTests)
     add_executable(${X} ${X}.cpp)
-    target_link_libraries(${X} Solana.Core.Common GTest::gtest_main Solana.Rpc Solana.Core.Programs)
+    target_link_libraries(${X} GTest::gtest_main Solana.Rpc Solana.Core.Programs)
     gtest_discover_tests(${X})
 endforeach()

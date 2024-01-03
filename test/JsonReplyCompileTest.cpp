@@ -4,11 +4,19 @@
 #define CLASS RepyCompileTest
 
 
-// This is just to make sure these things serializeMessage
+// This is just to make sure these things compile
 
 using namespace Solana;
 
-TEST(CLASS, GetAccountInfo) {
-    auto res = WithJsonReply<GetAccountInfo<>>("placeholder");
-    EXPECT_TRUE(true);
+TEST(CLASS, CompileTest) {
+    WithJsonReply<GetAccountInfo<>>("placeholder");
+    WithJsonReply<GetBalance>("placeholder");
+    WithJsonReply<GetBlock>(0);
+    WithJsonReply<GetBlockHeight>();
+    WithJsonReply<GetBlockProduction>();
+    WithJsonReply<GetLatestBlockhash>();
+    WithJsonReply<SendTransaction>("placeholder");
+    WithJsonReply<SimulateTransaction>("placeholder");
 }
+
+

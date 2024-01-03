@@ -18,7 +18,7 @@ namespace Solana {
         {}
 
         explicit SimulateTransaction(const std::string & txn)
-        : txn(txn) {}
+        : txn(txn) x{}
         std::string methodName() const override { return "simulateTransaction"; }
 
         json toJson() const override {

@@ -3,8 +3,12 @@
 #include "RpcMethod.hpp"
 
 namespace Solana {
+
     template<typename T>
-    struct WithJsonReply : RpcMethod {
+    concept IsRpcMethod = std::is_base_of<RpcMethod, T>::value;
+
+    template<IsRpcMethod T>
+    struct WithJsonReply : public RpcMethod {
 
         using Reply = json;
 
