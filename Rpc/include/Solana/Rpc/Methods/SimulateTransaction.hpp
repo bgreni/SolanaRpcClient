@@ -15,13 +15,13 @@ namespace Solana {
 
         struct SimReturnAccounts {
             std::vector<std::string> addresses;
-            EncodingType encodingType;
+            AccountEncoding encodingType = AccountEncoding(EncodingType::Base64);
         };
 
         struct Config {
             Commitment commitment;
             RPCPARAM(bool, sigVerify);
-            RPCPARAM(bool, replaceRecentBlockHash);
+            RPCPARAM(bool, replaceRecentBlockhash);
             MinContextSlot minContextSlot;
             TransactionEncoding encodingType;
             std::optional<SimReturnAccounts> accounts;
@@ -37,21 +37,37 @@ namespace Solana {
                 } else {
                     throw std::runtime_error("Invalid txn encoding: " + *config.encodingType);
                 }
+            } else {
+                encodedTxn = txn.serialize().toString();
             }
             this->txn = encodedTxn;
             this->config = config;
         }
 
-        explicit SimulateTransaction(const std::string & txn, const Config = {})
+        explicit SimulateTransaction(const std::string & txn, const Config & config = {})
         : txn(txn), config(config) {}
         std::string methodName() const override { return "simulateTransaction"; }
 
         json toJson() const override {
             auto c = json::object();
-            config.commitment->addToJson(c);
-            if (config.si)
+            config.commitment.addToJson(c);
+            config.sigVerify.addToJson(c);
+            config.replaceRecentBlockhash.addToJson(c);
+            config.minContextSlot.addToJson(c);
+            config.encodingType.addToJson(c);
+            if (config.accounts) {
+                auto accounts = json::object();
+                auto addresses = json::array();
+                for (auto & ac : config.accounts->addresses) {
+                    addresses.emplace_back(ac);
+                }
+                accounts["addresses"] = addresses;
+                accounts["encoding"] = *config.accounts.value().encodingType;
+                c["accounts"] = accounts;
+            }
             return json::array({
                 txn,
+                c
             });
         }
 

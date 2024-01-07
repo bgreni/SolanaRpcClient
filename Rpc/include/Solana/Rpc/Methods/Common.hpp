@@ -21,7 +21,7 @@ namespace Solana {
 
         void addToJson(json & data) const {
             if (this->has_value()) {
-                data[name] = this->value();
+                data[name.value] = this->value();
             }
         }
     };

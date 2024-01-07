@@ -10,8 +10,8 @@
 #include "Solana/Rpc/Methods/GetLatestBlockhash.hpp"
 #include "Solana/Rpc/Methods/SimulateTransaction.hpp"
 #include "Solana/Rpc/Methods/SendTransaction.hpp"
+#include "Solana/Rpc/Methods/RequestAirdrop.hpp"
 #include "Solana/Rpc/Methods/WithJsonReply.hpp"
-
 
 namespace Solana {
     class Rpc {
