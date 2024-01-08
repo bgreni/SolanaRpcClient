@@ -8,12 +8,14 @@
 namespace Solana {
     struct GetBlockProduction : RpcMethod {
 
-
+        // Reply structure
 
         struct Reply {
             std::unordered_map<std::string
                 ,std::array<int, 2>> byIdentity;
         };
+
+        // Config params
 
         struct Config {
             Commitment commitment;
@@ -21,6 +23,8 @@ namespace Solana {
             std::optional<
                 std::pair<int64_t, int64_t>> range;
         };
+
+        // Command impl
 
         explicit GetBlockProduction(const Config & config = {})
             : config(config) {}

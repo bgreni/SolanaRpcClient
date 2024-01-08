@@ -6,6 +6,8 @@
 
 namespace Solana {
     struct SimulateTransaction : public RpcMethod {
+
+        // Reply structure
         using Reply = json;
 
         static Reply parseReply(const json & j) {
@@ -18,6 +20,8 @@ namespace Solana {
             AccountEncoding encodingType = AccountEncoding(EncodingType::Base64);
         };
 
+        // Config params
+
         struct Config {
             Commitment commitment;
             RPCPARAM(bool, sigVerify);
@@ -26,6 +30,8 @@ namespace Solana {
             TransactionEncoding encodingType;
             std::optional<SimReturnAccounts> accounts;
         };
+
+        // Command impl
 
         explicit SimulateTransaction(const Txn & txn, const Config & config = {}) {
             std::string encodedTxn{};

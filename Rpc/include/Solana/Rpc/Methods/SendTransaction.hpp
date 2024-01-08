@@ -5,11 +5,15 @@
 
 namespace Solana {
     struct SendTransaction : public RpcMethod {
+
+        // Reply structure
         using Reply = json;
 
         static Reply parseReply(const json & j) {
             return j["result"];
         }
+
+        // Command impl
 
         explicit SendTransaction(
             const Txn & txn)

@@ -9,14 +9,20 @@
 namespace Solana {
     struct GetBalance : RpcMethod {
 
+        // Reply structure
+
         struct Reply {
             int64_t value;
         };
+
+        // Config params
 
         struct Config {
             Commitment commitment;
             MinContextSlot minContextSlot;
         };
+
+        // Command impl
 
         explicit GetBalance(const std::string & address, const Config & config = {})
             : address(address), config(config) {}

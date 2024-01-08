@@ -4,16 +4,24 @@
 #include "Common.hpp"
 
 namespace Solana {
-    class RequestAirdrop : public RpcMethod {
+    struct RequestAirdrop : public RpcMethod {
+
+        // Reply structure
+
         using Reply = std::string;
 
         static Reply parseReply(const json & j) {
             return j["result"].get<std::string>();
         }
 
+        // Config params
+
         struct Config {
             Commitment commitment;
         };
+
+
+        // Command impl
 
         explicit RequestAirdrop(
             const std::string & address,

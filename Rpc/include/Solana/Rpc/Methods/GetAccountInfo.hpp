@@ -24,6 +24,8 @@ namespace Solana {
     template<typename AccountStruct = json>
     struct GetAccountInfo : RpcMethod {
 
+        // Reply structure
+
         struct Reply {
             bool executable;
             int64_t lamports;
@@ -78,10 +80,14 @@ namespace Solana {
                     .accountData = account,
             };
         }
+
+        // Config params
         struct Config {
             Commitment commitment;
             AccountEncoding encoding;
         };
+
+        // Command impl
 
         explicit GetAccountInfo(const std::string & address, const Config & config = {})
             : key(address), config(config) {}

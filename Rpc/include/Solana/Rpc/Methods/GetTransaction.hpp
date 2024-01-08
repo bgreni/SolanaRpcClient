@@ -30,6 +30,8 @@ namespace Solana {
         typename ParseStruct = void>
     struct GetTransaction : RpcMethod {
 
+        // Reply structure
+
         struct Reply {
             u64 slot;
             typename Private::TxnDataType<Encoding>::type transaction;
@@ -63,9 +65,13 @@ namespace Solana {
             };
         }
 
+        // Config params
+
         struct Config {
             Commitment commitment;
         };
+
+        // Command impl
 
         explicit GetTransaction(
             const std::string & signature,

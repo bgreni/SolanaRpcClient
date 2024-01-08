@@ -5,14 +5,21 @@
 
 namespace Solana {
     struct GetBlockHeight : RpcMethod {
+
+        // Reply structure
+
         struct Reply {
             int64_t height;
         };
+
+        // Config params
 
         struct Config {
             Commitment commitment;
             MinContextSlot minContextSlot;
         };
+
+        // Command impl
 
         GetBlockHeight(const Config & config = {}) : config(config){}
 

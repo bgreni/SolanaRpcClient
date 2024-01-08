@@ -5,6 +5,8 @@
 namespace Solana {
     struct GetLatestBlockhash : public RpcMethod {
 
+        // Reply structure
+
         struct Reply {
             std::string blockHash;
             u64 lastValidBlockHeight;
@@ -18,6 +20,8 @@ namespace Solana {
                 .lastValidBlockHeight = v["lastValidBlockHeight"].get<u64>()
             };
         }
+
+        // Command impl
 
         explicit GetLatestBlockhash() = default;
 

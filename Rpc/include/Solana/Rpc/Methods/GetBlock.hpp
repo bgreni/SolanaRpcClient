@@ -4,6 +4,9 @@
 
 namespace Solana {
     struct GetBlock : RpcMethod {
+
+        // Reply structure
+
         struct Reply {
             json blockData;
         };
@@ -14,10 +17,14 @@ namespace Solana {
             };
         }
 
+        // Config params
+
         struct Config {
             Commitment commitment;
             AccountEncoding encoding;
         };
+
+        // Command impl
 
         explicit GetBlock(int64_t slot, const Config & config = {}) :
             slot(slot),
