@@ -13,7 +13,7 @@ namespace Solana {
         using Reply = json;
 
         static Reply parseReply(const json & data) {
-            return data;
+            return data["result"];
         }
 
         template <typename ...Args>

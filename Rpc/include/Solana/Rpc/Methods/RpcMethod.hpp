@@ -6,6 +6,10 @@
 
 using json = nlohmann::json;
 
+#define REPLY public:
+#define CONFIG public:
+#define COMMAND public:
+
 namespace Solana {
     struct RpcMethod {
         virtual json toJson() const = 0;

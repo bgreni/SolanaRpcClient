@@ -7,6 +7,9 @@
 #include "nlohmann/json.hpp"
 #include <regex>
 #include <iostream>
+#include <boost/url.hpp>
+
+using namespace boost::urls;
 
 using json = nlohmann::json;
 
@@ -29,19 +32,18 @@ namespace Solana::Network {
         HttpClient(const std::string & endpoint)
             : ctx(boost::asio::ssl::context::tlsv13_client)
         {
+
+            auto url = *parse_uri(endpoint);
             ctx.set_default_verify_paths();
             ctx.set_options(
                 boost::asio::ssl::context::default_workarounds
                 | boost::asio::ssl::context::no_sslv2
                 | boost::asio::ssl::context::no_sslv3
             );
-            // TODO: have a more robust way to set url
-            std::regex re("(.+):\\/\\/(.+)\\/");
-            std::cmatch m;
-            std::regex_match(endpoint.c_str(), m, re);
-            service = m[1];
-            this->endpoint = m[2];
-//            targetBase = m[3];
+
+            service = url.scheme();
+            this->endpoint = url.host();
+            targetBase = url.path() + url.query();
         }
         ~HttpClient() {
             ioc.join();
@@ -52,7 +54,7 @@ namespace Solana::Network {
         std::future<T> post(const json & body) {
             Request req{};
             req.method(beast::http::verb::post);
-            req.target("/" + targetBase);
+            req.target(targetBase);
             req.set(beast::http::field::content_type, "application/json");
             req.body() = body.dump();
             auto res = performRequest<T>(req);

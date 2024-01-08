@@ -16,15 +16,15 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
         nlohmann_json::nlohmann_json)
 
 find_package(Boost REQUIRED COMPONENTS
+        url
         system
         thread
         headers
         coroutine)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
-        Boost::boost
+        Boost::url
         Boost::thread
-        Boost::coroutine
-        )
+        Boost::coroutine)
 
 target_include_directories(${PROJECT_NAME} PUBLIC include)
