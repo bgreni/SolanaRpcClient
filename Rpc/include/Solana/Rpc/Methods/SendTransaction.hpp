@@ -13,15 +13,26 @@ namespace Solana {
             return j["result"];
         }
 
+        // Config params
+        struct Config {
+            SimpleEncoding encoding;
+            RPCPARAM(bool, skipPreflight);
+            RPCPARAM(u32, maxRetries);
+            MinContextSlot minContextSlot;
+        };
+
         // Command impl
 
         explicit SendTransaction(
-            const Txn & txn)
+            const Txn & txn, const Config & config = {})
             : txn(txn.serialize().toString())
+            , config(config)
         {}
 
-        explicit SendTransaction(const std::string & txn)
-            : txn(txn) {}
+        explicit SendTransaction(const std::string & txn, const Config & config = {})
+            : txn(txn)
+            , config(config)
+        {}
 
         std::string methodName() const override { return "sendTransaction"; }
 
@@ -32,5 +43,6 @@ namespace Solana {
         }
 
         std::string txn;
+        Config config;
     };
 }

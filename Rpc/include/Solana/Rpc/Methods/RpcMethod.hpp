@@ -2,6 +2,7 @@
 #include "nlohmann/json.hpp"
 #include <iostream>
 #include "Solana/Rpc/Methods/Common.hpp"
+#include "Solana/Core/Types/Types.hpp"
 
 using json = nlohmann::json;
 

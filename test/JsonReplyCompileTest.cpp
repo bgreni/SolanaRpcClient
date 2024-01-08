@@ -12,8 +12,10 @@ TEST(CLASS, CompileTest) {
     WithJsonReply<GetAccountInfo<>>("placeholder");
     WithJsonReply<GetBalance>("placeholder");
     WithJsonReply<GetBlock>(0);
+    WithJsonReply<GetBlocks>(0);
     WithJsonReply<GetBlockHeight>();
     WithJsonReply<GetBlockProduction>();
+    WithJsonReply<GetBlockCommitment>(0);
     WithJsonReply<GetLatestBlockhash>();
     WithJsonReply<SendTransaction>("placeholder");
     WithJsonReply<SimulateTransaction>("placeholder");

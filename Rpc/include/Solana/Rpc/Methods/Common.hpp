@@ -64,6 +64,27 @@ namespace Solana {
         Json
     };
 
+    struct SimpleEncoding : ConfigParam<std::string, "encoding"> {
+        template<typename T>
+        SimpleEncoding(const T & val) : ConfigParam<std::string, "encoding">(val) {}
+        SimpleEncoding(EncodingType type)
+        : ConfigParam<std::string, "encoding">(str(type))
+        {}
+
+        SimpleEncoding() = default;
+
+        static std::string str(EncodingType t) {
+            switch (t) {
+                case Base58:
+                    return "base58";
+                case Base64:
+                    return "base64";
+                default:
+                    throw std::runtime_error("Unsupported type");
+            }
+        }
+    };
+
     struct TransactionEncoding : ConfigParam<std::string, "encoding"> {
         template<typename T>
         TransactionEncoding(const T & val) : ConfigParam<std::string, "encoding">(val) {}

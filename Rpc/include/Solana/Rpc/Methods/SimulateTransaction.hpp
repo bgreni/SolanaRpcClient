@@ -52,6 +52,7 @@ namespace Solana {
 
         explicit SimulateTransaction(const std::string & txn, const Config & config = {})
         : txn(txn), config(config) {}
+
         std::string methodName() const override { return "simulateTransaction"; }
 
         json toJson() const override {
