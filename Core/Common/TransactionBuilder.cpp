@@ -20,10 +20,11 @@ Solana::Buffer TransactionBuilder::serializeMessage() {
     return buf;
 }
 
-void TransactionBuilder::sign(const Keypair & kp) {
+TransactionBuilder & TransactionBuilder::sign(const Keypair & kp) {
     const auto sig = kp.sign(serializeMessage());
     sigs.push_back(sig);
     signers.push_back(kp.pubkey);
+    return *this;
 }
 
 Message TransactionBuilder::compileMessage() {
@@ -65,7 +66,7 @@ Message TransactionBuilder::compileMessage() {
 
     const auto indexOf = [&](const Pubkey & key) -> u8 {
         for (u8 i = 0; i < keys.size(); ++i) {
-            if (keys[i].toStdString() == key.toStdString()) {
+            if (keys[i] == key) {
                 return i;
             }
         }
@@ -75,12 +76,12 @@ Message TransactionBuilder::compileMessage() {
     for (auto & ins : instructions) {
         CompactArray<u8> addresses(ins.accounts.size());
         std::transform(
-                ins.accounts.begin(),
-                ins.accounts.end(),
-                addresses.begin(),
-                [&](const auto & a){
-                    return indexOf(a.key);
-                });
+        ins.accounts.begin(),
+        ins.accounts.end(),
+        addresses.begin(),
+        [&](const auto & a){
+            return indexOf(a.key);
+        });
         compiledIns.push_back({
             .programIndex = indexOf(ins.programId),
             .addressIndices = addresses,

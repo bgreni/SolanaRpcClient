@@ -27,13 +27,24 @@ namespace Solana::Network {
 
     using Request  = boost::beast::http::request<boost::beast::http::string_body>;
 
+    struct Url {
+        Url(const std::string & endpoint) {
+            auto url = *parse_uri(endpoint);
+            service = url.scheme();
+            this->endpoint = url.host();
+            targetBase = url.path() + (url.has_query() ? ("?" + url.query()) : "");
+        }
+        std::string endpoint;
+        std::string service;
+        std::string targetBase;
+    };
+
     class HttpClient {
     public:
-        HttpClient(const std::string & endpoint)
-            : ctx(boost::asio::ssl::context::tlsv13_client)
+        HttpClient(const Url & url)
+            : ctx(boost::asio::ssl::context::tlsv13_client), url(url)
         {
 
-            auto url = *parse_uri(endpoint);
             ctx.set_default_verify_paths();
             ctx.set_options(
                 boost::asio::ssl::context::default_workarounds
@@ -41,9 +52,6 @@ namespace Solana::Network {
                 | boost::asio::ssl::context::no_sslv3
             );
 
-            service = url.scheme();
-            this->endpoint = url.host();
-            targetBase = url.path() + url.query();
         }
         ~HttpClient() {
             ioc.join();
@@ -54,7 +62,7 @@ namespace Solana::Network {
         std::future<T> post(const json & body) {
             Request req{};
             req.method(beast::http::verb::post);
-            req.target(targetBase);
+            req.target(url.targetBase);
             req.set(beast::http::field::content_type, "application/json");
             req.body() = body.dump();
             auto res = performRequest<T>(req);
@@ -66,17 +74,16 @@ namespace Solana::Network {
             std::promise<T> promise;
             auto fut = promise.get_future();
 
-            auto ex = make_strand(ioc);
+            static const auto ex = make_strand(ioc);
 
-            auto ep = tcp::resolver(ex).resolve(endpoint, service);
+            static const auto ep = tcp::resolver(ex).resolve(url.endpoint, url.service);
 
-            std::shared_ptr<Socket> ssl_stream =
-                std::make_shared<Socket>(ex, ctx);
+            auto ssl_stream = std::make_shared<Socket>(ex, ctx);
 
             ssl_stream->set_verify_mode(ssl::verify_peer);
 
             // I don't fuckin know https://stackoverflow.com/questions/35175073/boost-ssl-verifies-expired-and-self-signed-certificates
-            if(!SSL_set_tlsext_host_name(ssl_stream->native_handle(), endpoint.c_str()))
+            if(!SSL_set_tlsext_host_name(ssl_stream->native_handle(), url.endpoint.c_str()))
             {
                 boost::system::error_code ec{static_cast<int>(::ERR_get_error()), boost::asio::error::get_ssl_category()};
                 throw boost::system::system_error{ec};
@@ -90,7 +97,7 @@ namespace Solana::Network {
                     auto & s = *ssl_stream;
 
                     r.prepare_payload();
-                    r.set(http::field::host, endpoint);
+                    r.set(http::field::host, url.endpoint);
                     auto sent = http::async_write(s, r, yield);
 
                     ResponseBuffer buffer{};
@@ -111,9 +118,7 @@ namespace Solana::Network {
 
         boost::asio::thread_pool ioc = {};
         boost::asio::ssl::context ctx;
-        std::string endpoint;
-        std::string service;
-        std::string targetBase;
+        const Url url;
     };
 }
 

@@ -5,6 +5,8 @@
 
 namespace Solana::Programs::System {
 
+    static const Pubkey ProgramId = Pubkey::fromString("11111111111111111111111111111111");
+
     struct Transfer : public Transaction::ConcreteInstruction {
 
         LAYOUT(Data,
@@ -14,23 +16,24 @@ namespace Solana::Programs::System {
         Transfer(
             const Pubkey & from,
             const Pubkey & to,
-            u64 lamports)
-                : data(Data{.number=2, .lamports = lamports})
-                , toAccount(Transaction::Account {
-                        .key = to,
-                        .isSigner = false,
-                        .isWritable = true,
-                })
-                , fromAccount(Transaction::Account {
-                        .key = from,
-                        .isSigner = true,
-                        .isWritable = true,
-                }) {}
+            u64 lamports);
 
         Transaction::Instruction toInstruction() const override;
 
         Transaction::Account toAccount;
         Transaction::Account fromAccount;
+        Data data;
+    };
+
+    struct Allocate : public Transaction::ConcreteInstruction {
+        LAYOUT(Data,
+               (u32, number),
+               (u64, allocatedSpace))
+
+        Allocate(const Pubkey & key, u64 space);
+        Transaction::Instruction toInstruction() const override;
+
+        Transaction::Account target;
         Data data;
     };
 };

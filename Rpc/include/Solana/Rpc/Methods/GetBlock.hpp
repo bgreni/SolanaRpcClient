@@ -43,7 +43,6 @@ namespace Solana {
 
         std::string methodName() const override { return "getBlock"; }
 
-    private:
         int64_t slot;
         Config config;
     };

@@ -4,13 +4,25 @@
 
 #include "Solana/Core/Programs/System/System.hpp"
 
-using namespace Solana;
+using namespace Solana::Programs::System;
 
-namespace {
-    const Pubkey ProgramId = Pubkey::fromString("11111111111111111111111111111111");
-}
+Transfer::Transfer(
+        const Pubkey & from,
+        const Pubkey & to,
+        u64 lamports)
+        : data(Data{.number=2, .lamports = lamports})
+        , toAccount(Transaction::Account {
+                .key = to,
+                .isSigner = false,
+                .isWritable = true,
+        })
+        , fromAccount(Transaction::Account {
+                .key = from,
+                .isSigner = true,
+                .isWritable = true,
+        }){}
 
-Solana::Transaction::Instruction Solana::Programs::System::Transfer::toInstruction() const {
+Solana::Transaction::Instruction Transfer::toInstruction() const {
 
     return Solana::Transaction::Instruction {
         .programId = ProgramId,
@@ -21,3 +33,23 @@ Solana::Transaction::Instruction Solana::Programs::System::Transfer::toInstructi
         .data = data.encode()
     };
 }
+
+Allocate::Allocate(const Solana::Pubkey &key, Solana::u64 space)
+    : target(Transaction::Account{
+        .key = key,
+        .isSigner = true,
+        .isWritable = true
+    }),
+    data(Data{.number = 8, .allocatedSpace = space})
+{}
+
+Solana::Transaction::Instruction Allocate::toInstruction() const {
+    return Solana::Transaction::Instruction {
+        .programId = ProgramId,
+        .accounts = Transaction::CompactArray<Transaction::Account>{
+            target
+        },
+        .data = data.encode()
+    };
+}
+

@@ -10,6 +10,7 @@
 #include "Solana/Rpc/Methods/GetBlockProduction.hpp"
 #include "Solana/Rpc/Methods/GetBlockCommitment.hpp"
 #include "Solana/Rpc/Methods/GetAccountInfo.hpp"
+#include "Solana/Rpc/Methods/GetEpochInfo.hpp"
 #include "Solana/Rpc/Methods/GetTransaction.hpp"
 #include "Solana/Rpc/Methods/GetLatestBlockhash.hpp"
 #include "Solana/Rpc/Methods/GetSlot.hpp"

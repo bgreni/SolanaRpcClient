@@ -36,7 +36,7 @@ namespace Solana::Transaction {
         }
 
         Buffer serializeMessage();
-        void sign(const Solana::Crypto::Keypair & kp);
+        TransactionBuilder & sign(const Solana::Crypto::Keypair & kp);
         Message compileMessage();
 
     private:
