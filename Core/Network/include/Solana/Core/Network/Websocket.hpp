@@ -58,7 +58,10 @@ namespace Solana::Network {
 
         void run(const Url & url);
 
-        std::future<int> subscribe(const json & message, MessageHandler && callback);
+        std::future<int> subscribe(
+            const json & message,
+            MessageHandler && callback);
+        
         std::future<bool> unsubscribe(json & message);
 
     private:
