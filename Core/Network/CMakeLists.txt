@@ -7,7 +7,9 @@ file(
     "${CMAKE_CURRENT_SOURCE_DIR}/include/include")
  file(GLOB SOURCES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 
-add_library(${PROJECT_NAME} STATIC ${SOURCES} ${HEADER_LIST})
+add_library(${PROJECT_NAME} STATIC ${SOURCES} ${HEADER_LIST}
+        Websocket.cpp
+        include/Solana/Core/Network/Websocket.hpp)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
         Solana.Core.Common

@@ -18,12 +18,28 @@
 #include "Solana/Rpc/Methods/SendTransaction.hpp"
 #include "Solana/Rpc/Methods/RequestAirdrop.hpp"
 #include "Solana/Rpc/Methods/WithJsonReply.hpp"
+#include "Solana/Core/Network/Websocket.hpp"
+#include <thread>
+#include <shared_mutex>
+#include <condition_variable>
+#include <memory>
 
 namespace Solana {
     class Rpc {
     public:
-        Rpc(const std::string & endpoint)
-            : client(endpoint) {}
+
+        static Rpc DefaultMainnet();
+
+        explicit Rpc(const std::string & endpoint)
+            : client(endpoint)
+            , wsThread(&Rpc::runWs, this)
+        {
+
+        }
+
+        ~Rpc();
+
+        Rpc(const Rpc & other) = delete;
 
         template<typename T>
         std::future<RpcReply<T>> send(const T & req) {
@@ -43,8 +59,23 @@ namespace Solana {
             auto res = client.post<RpcReply<T>>(j);
             return res;
         }
+
+        std::future<int> onSlot(MessageHandler && handler);
+        std::future<bool> removeSubscription(int subId);
+
     private:
+        void runWs();
+        std::future<int> createSubscription(
+            const json & message,
+            MessageHandler && handler);
+    private:
+
         Network::HttpClient client;
+        std::shared_ptr<Network::Websocket> ws;
+        std::thread wsThread;
+        std::mutex wsMutex;
+        std::condition_variable cv;
+        std::atomic_bool ready = false;
     };
 }
 

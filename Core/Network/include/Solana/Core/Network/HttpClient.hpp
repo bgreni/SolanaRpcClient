@@ -32,7 +32,7 @@ namespace Solana::Network {
             auto url = *parse_uri(endpoint);
             service = url.scheme();
             this->endpoint = url.host();
-            targetBase = url.path() + (url.has_query() ? ("?" + url.query()) : "");
+            targetBase = url.path() + (url.has_query() ? ("?" + url.query()) : "/");
         }
         std::string endpoint;
         std::string service;
@@ -57,6 +57,8 @@ namespace Solana::Network {
             ioc.join();
             ioc.stop();
         }
+
+        Url getUrl() { return url; }
 
         template<typename T>
         std::future<T> post(const json & body) {
